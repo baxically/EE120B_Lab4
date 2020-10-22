@@ -12,78 +12,126 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {start, wait, plusHold, minusHold, restart} currState;
+enum States {start, doNothing, plusHold, minusHold, restart} currState;
 
-unsigned char tmpA;
-unsigned char tmpC;
+unsigned char tmpC = 7; //initial output PORTC
 
 void Tick()
 {
+    unsigned char tmpA = PINA;
     switch(currState) //transitions
     {
         case start:
-            tmpC = 7; //initial output at PORTC
-            currState = wait;
+            currState = doNothing;
             break;
-        case wait:
-            if(((tmpA & 0x01) == 0x01) && ((tmpA & 0x02) == 0x00))
+        case doNothing:
+            if((tmpA & 0x03) == 0x00)
             {
-                currState = plusHold; //will increase tmpC if < 9
-                if(tmpC < 9 )
-                {
-                    ++tmpC;
-                }
-                else
-                {
-                    tmpC = 0;
-                }
+                currState = doNothing;
             }
-            else if (((tmpA & 0x02) == 0x02) && ((tmpA & 0x01) == 0x00))
-            {
-                currState = minusHold; //will decrease tmpC if > 0
-                if(tmpC > 0)
-                {
-                    --tmpC;
-                }
-            }
-            else if((tmpA & 0x03) == 0x03)
-            {
-                currState = restart;
-                tmpC = 0; //restart count
-            }
-            else
-            {
-                currState = wait;
-            }
-            break;
-        case plusHold:
-            if((tmpA & 0x01) == 0x01)
+            else if((tmpA & 0x03) == 0x01)
             {
                 currState = plusHold;
+                if(tmpC != 9)
+                {
+                    ++tmpC;
+                    PORTC = tmpC;
+                }
+            }
+            else if((tmpA & 0x03) == 0x02)
+            {
+                currState = minusHold;
+                if(tmpC != 0)
+                {
+                    --tmpC;
+                    PORTC = tmpC;
+                }
             }
             else
             {
-                currState = wait;
+                currState = restart;
+                tmpC = 0;
+                PORTC = tmpC;
             }
             break;
         case minusHold:
-            if((tmpA & 0x02) == 0x02)
+            if((tmpA & 0x03) == 0x00)
+            {
+                currState = doNothing;
+            }
+            else if((tmpA & 0x03) == 0x00)
+            {
+                currState = plusHold;
+                if(tmpC != 9)
+                {
+                    ++tmpC;
+                    PORTC = tmpC;
+                }
+            }
+            else if((tmpA & 0x03) == 0x02)
             {
                 currState = minusHold;
             }
             else
             {
-                currState = wait;
+                currState = restart;
+                tmpC = 0;
+                PORTC = tmpC;
             }
             break;
-        case restart:
-            if((tmpA & 0x03) == 0x03)
+        case plusHold:
+            if((tmpA & 0x03) == 0x00)
             {
-                currState = restart;
+                currState = doNothing;
+            }
+            else if((tmpA & 0x03) == 0x01)
+            {
+                currState = plusHold;
+            }
+            else if((tmpA & 0x03) == 0x02)
+            {
+                currState = minusHold;
+                if(tmpC != 0)
+                {
+                    --tmpC;
+                    PORTC = tmpC;
+                }
             }
             else
             {
-                currState = wait;
+                currState = restart;
+                tmpC = 0;
+                PORTC = tmpC;
+            }
+            break;
+        case restart:
+            if((tmpA & 0x03) == 0x00)
+            {
+                currState = doNothing;
+            }
+            else if((tmpA & 0x03) == 0x01)
+            {
+                currState = plusHold;
+                if(tmpC != 9)
+                {
+                    ++tmpC;
+                    PORTC =  tmpC;
+                }
+            }
+            else if((tmpA & 0x03) == 0x02)
+            {
+                currState = minusHold;
+                if(tmpC != 0)
+                {
+                    --tmpC;
+                    PORTC = tmpC;
+                }
+            }
+            else
+            {
+                currState  = restart;
+                tmpC = 0;
+                PORTC = tmpC;
             }
             break;
         default:
@@ -91,24 +139,19 @@ void Tick()
             break;
     }
     
-    switch(currState) //actions incrementing/decrementing at wrong time????
+    switch(currState) //actions
     {
-        case wait:
+        case start:
+            PORTC =  tmpC;
             break;
+        case doNothing:
+            break; //litreally does nothing
         case plusHold:
-            /*if(tmpC < 9)
-            {
-                tmpC++;
-            }*/
-            break;
+            break; //transition actoin above
         case minusHold:
-            /*if(tmpC > 0)
-            {
-                tmpC--;
-            }*/
-            break;
+            break; //transition actioin above
         case restart:
-            break;
+            break; //transition action above
         default:
             break;
     }
@@ -121,13 +164,10 @@ int main(void) {
     DDRC = 0xFF;
     PORTC = 0x00;
     
-    tmpC = 0x00;
     currState = start;
     /* Insert your solution below */
     while (1) {
-        tmpA = PINA;
         Tick(); //calls SM
-        PORTC = tmpC;
     }
     return 1;
 }

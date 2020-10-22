@@ -61,7 +61,7 @@ void Tick()
             {
                 currState = rightButtonRel;
             }
-            else if((cnt == 3) && (tmpA &  0x07) == array[cnt])
+            else if((cnt == 3) && (tmpA & 0x07) == array[cnt])
             {
                 currState = unlocked;
             }
