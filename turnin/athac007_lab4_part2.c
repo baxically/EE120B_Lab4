@@ -22,6 +22,7 @@ void Tick()
     switch(currState) //transitions
     {
         case start:
+            PORTC = tmpC;
             currState = doNothing;
             break;
         case doNothing:
