@@ -31,7 +31,7 @@ void Tick()
                 currState = plusHold; //will increase tmpC if < 9
                 if(tmpC < 9)
                 {
-                    tmpC++;
+                    ++tmpC;
                 }
             }
             else if (((tmpA & 0x02) == 0x02) && ((tmpA & 0x01) == 0x00))
@@ -39,12 +39,13 @@ void Tick()
                 currState = minusHold; //will decrease tmpC if > 0
                 if(tmpC > 0)
                 {
-                    tmpC--;
+                    --tmpC;
                 }
             }
             else if((tmpA & 0x03) == 0x03)
             {
                 currState = restart;
+                tmpC = 0; //restart count
             }
             else
             {
