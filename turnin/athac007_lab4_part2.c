@@ -1,11 +1,11 @@
-/*	Author: Ally Thach, athac007@ucr.edu
- *  Partner(s) Name: 
- *	Lab Section: 24
- *	Assignment: Lab 4  Exercise 2
- *	Exercise Description: Buttons are connected to PA0 and PA1. Output for PORTC is initially 7. Pressing PA0 increments PORTC once (stopping at 9). Pressing PA1 decrements PORTC once (stopping at 0). If both buttons are depressed (even if not initially simultaneously), PORTC resets to 0.
+/*    Author: Ally Thach, athac007@ucr.edu
+ *  Partner(s) Name:
+ *    Lab Section: 24
+ *    Assignment: Lab 4  Exercise 2
+ *    Exercise Description: Buttons are connected to PA0 and PA1. Output for PORTC is initially 7. Pressing PA0 increments PORTC once (stopping at 9). Pressing PA1 decrements PORTC once (stopping at 0). If both buttons are depressed (even if not initially simultaneously), PORTC resets to 0.
  *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
+ *    I acknowledge all content contained herein, excluding template or example
+ *    code, is my own original work.
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_
@@ -14,7 +14,7 @@
 
 enum States {start, wait, plusHold, minusHold, restart} currState;
 
-unsigned char  tmpA;
+unsigned char tmpA;
 unsigned char tmpC;
 
 void Tick()
@@ -32,6 +32,10 @@ void Tick()
                 if(tmpC < 9 )
                 {
                     ++tmpC;
+                }
+                else
+                {
+                    tmpC = 0;
                 }
             }
             else if (((tmpA & 0x02) == 0x02) && ((tmpA & 0x01) == 0x00))
