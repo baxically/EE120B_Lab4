@@ -42,6 +42,10 @@ void Tick()
                     tmpC--;
                 }
             }
+            else if((tmpA & 0x03) == 0x03)
+            {
+                currState = restart;
+            }
             else
             {
                 currState = wait;
