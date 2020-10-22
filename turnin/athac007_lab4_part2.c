@@ -29,7 +29,7 @@ void Tick()
             if(((tmpA & 0x01) == 0x01) && ((tmpA & 0x02) == 0x00))
             {
                 currState = plusHold; //will increase tmpC if < 9
-                if(tmpC < 9)
+                if(tmpC < 9 )
                 {
                     ++tmpC;
                 }
