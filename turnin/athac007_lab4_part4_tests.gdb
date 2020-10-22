@@ -39,26 +39,28 @@ echo Running all tests..."\n\n
 #checkResult
 
 # Add tests below
-test "PINA: 0x04, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01 => PB: 1, PORTC: 3, state: unlocked"
+test "PB = 1, PINA: 0x80 => PB:0, PORTC: 0x04 state inside"
+set Tick::tmpB = 1
+set state = wait
+setPINA 0x80
+continue 5
+expectPORTB 0x00
+expectPORTC 0x05
+expect state inside
+checkResult
+
+test "PINA: 0x04, 0x00, 0x02 => PB:1, PORTC:0x03 state: outUnlock"
 set state = Start
 setPINA 0x04
 continue 5
 setPINA 0x00
 continue 5
-setPINA 0x01
-continue 5
-setPINA 0x00
-continue 5
 setPINA 0x02
 continue 5
-setPINA 0x00
-continue 5
-setPINA 0x01
-expectPORTB 1
-expectPORTC 3
-check state unlocked
+expectPORTB 0x01
+expectPORTC 0x03
+expect state outUnlock
 checkResult
-
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests

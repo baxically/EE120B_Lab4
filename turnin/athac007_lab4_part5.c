@@ -14,7 +14,7 @@
 
 enum States {start, locked, rightButton, rightButtonRel, unlocked} currState;
 
-unsigned char  tmpA;
+unsigned char tmpA;
 unsigned char tmpB;
 unsigned char tmpC;
 unsigned char array[4] = {0x04, 0x01, 0x02, 0x01};
