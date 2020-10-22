@@ -27,59 +27,33 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 # Example test:
-#test "PINA: 0x00, PINB: 0x00 => PORTC: 0"
+test "PINA: 0x00, PINB: 0x00 => PORTC: 0"
 # Set inputs
-#setPINA 0x00
-#setPINB 0x00
+setPINA 0x00
+setPINB 0x00
 # Continue for several ticks
-#continue 2
+continue 2
 # Set expect values
-#expectPORTC 0
+expectPORTC 0
 # Check pass/fail
-#checkResult
+checkResult
 
 # Add tests below
-test "PINA: 0x00 => PINC: 7, state: wait"
+test "PINA: 0x00 => PINB: 0x01, state: aRelease"
 set state = start;
 setPINA 0x00
 continue 5
-expectPORTC 7
-expect currState wait
+expectPORTB 0x01
+expect state aRelease
 checkResult
 
-test "PINA: 0x01 => PINC: 8, state: plusHold"
+test "PINA: 0x00 => PINB: 0x02, state: bHold"
 set state = start;
 setPINA 0x01
 continue 5
-expectPORTC 8
-expect currState plusHold
+expectPORTB 0x02
+expect state bHold
 checkResult
-
-test "PINA: 9 => PINC: 9, state: wait"
-set Tick::tmpC = 9
-set state = start;
-setPINA 0x01
-continue 5
-setPINA 0x00
-continue 5
-expectPORTC 9
-expect currState wait
-checkResult
-
-test "PINA: 0 => PINC: 1, state: minusHold"
-set Tick::tmpC = 1
-set state = start;
-setPINA 0x02
-continue 5
-setPINA 0x00
-continue 5
-setPINA 0x02
-continue 5
-expectPORTC 0
-expect currState minusHold
-checkResult
-
-
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests
